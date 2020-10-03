@@ -42,7 +42,7 @@ def comparable(data):
     ext1 = name1.split('.')[-1]
     ext2 = name2.split('.')[-1]
 
-    if name1 == name2:
+    if name1 >= name2:
         return False
     if ext1 != ext2:
         return False
