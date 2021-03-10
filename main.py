@@ -23,8 +23,11 @@ all_paths = []
 for path, subdirs, files in os.walk(root_path):
     for name in files:
         fullpath = os.path.join(path, name)
-        fsize = count_lines(fullpath)
-        all_paths.append([fullpath, fsize])
+        try: 
+            fsize = count_lines(fullpath)
+            all_paths.append([fullpath, fsize])
+        except: 
+            pass; 
 
 
 def count_differences(file_a, file_b):
