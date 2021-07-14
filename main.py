@@ -4,30 +4,41 @@ import difflib
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('dir', help='Directory containing all the source files')
-parser.add_argument('--exclude', help='Exclude files matching the given pattern (ex: node_modules)')
+parser.add_argument('dir', help='Directory containing all the source files (can use multiple separated by a comma)')
+parser.add_argument('--exclude', help='Exclude files matching the given pattern (can use multiple separated by a comma)')
 parser.add_argument('--ratio', help='Minimum percentage of common code (default: 0.9)', type=float)
 parser.add_argument('--min-lines', help='Minimum number of common lines (default: 10)', type=int)
 args = parser.parse_args()
 
-root_path = args.dir
+root_paths = args.dir.split(',')
 min_lines = args.min_lines or 10
 min_ratio = args.ratio or 0.9
 exclude = args.exclude
-
+if exclude: 
+  exclude = exclude.split(',')
+else:
+  exclude = []
 
 def count_lines(fname):
     return len(open(fname).readlines())
 
 all_paths = []
-for path, subdirs, files in os.walk(root_path):
-    for name in files:
-        fullpath = os.path.join(path, name)
-        try: 
-            fsize = count_lines(fullpath)
-            all_paths.append([fullpath, fsize])
-        except: 
-            pass; 
+for root_path in root_paths: 
+  for path, subdirs, files in os.walk(root_path):
+      for name in files:
+          fullpath = os.path.join(path, name)
+          excluded = False
+          for item in exclude: 
+            if item in fullpath: 
+              excluded = True
+          if excluded: 
+            continue
+
+          try: 
+              fsize = count_lines(fullpath)
+              all_paths.append([fullpath, fsize])
+          except: 
+              pass; 
 
 
 def count_differences(file_a, file_b):
